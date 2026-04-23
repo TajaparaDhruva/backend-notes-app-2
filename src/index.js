@@ -1,17 +1,12 @@
-
 const app = require("./app");
 const connectDB = require("./config/db");
 
+async function startServer() {
+  await connectDB();
 
-//connect to mongoDb
-
-function StartServer(){
-    connectDB();
-
-app.listen(3000,()=>{
-    console.log("Server has been started");
-})
-
+  app.listen(3000, () => {
+    console.log("Server running on port 3000");
+  });
 }
 
-StartServer();
+startServer();
