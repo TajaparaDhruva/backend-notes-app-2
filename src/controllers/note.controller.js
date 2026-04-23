@@ -284,6 +284,52 @@ const deleteNote = async (req, res) => {
   }
 };
 
+const deleteBulkNotes = async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    // 1. Validate input
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "ids array is required and cannot be empty",
+        data: null,
+      });
+    }
+
+    // 2. Validate each ID
+    const invalidIds = ids.filter(id => !isValidId(id));
+
+    if (invalidIds.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "One or more IDs are invalid",
+        data: null,
+      });
+    }
+
+    // 3. Delete notes
+    const result = await Notes.deleteMany({
+      _id: { $in: ids },
+    });
+
+    // 4. Success
+    res.status(200).json({
+      success: true,
+      message: `${result.deletedCount} notes deleted successfully`,
+      data: null,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   createNote,
   createMultipleNotes,
@@ -292,4 +338,5 @@ module.exports = {
   replaceNote,
   updateNote,
   deleteNote,
+  deleteBulkNotes,
 };
