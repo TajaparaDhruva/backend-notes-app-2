@@ -105,9 +105,74 @@ const getAllNote = async (req, res) => {
   }
 };
 
+const replaceNote = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let { title, content, category, isPinned } = req.body;
+
+    // 1. Validate ID
+    if (!isValidId(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid ID",
+        data: null,
+      });
+    }
+
+    // 2. Enforce FULL replacement (required fields must be present)
+    if (!title || !content) {
+      return res.status(400).json({
+        success: false,
+        message: "Title and content are required",
+        data: null,
+      });
+    }
+
+    // 3. Apply defaults if not provided
+    category = category || "personal";
+    isPinned = isPinned ?? false;
+
+    // 4. Replace document completely
+    const updated = await Notes.findByIdAndUpdate(
+      id,
+      { title, content, category, isPinned },
+      {
+        new: true,
+        overwrite: true,
+        runValidators: true,
+      }
+    );
+
+    // 5. Not found
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: "Note not found",
+        data: null,
+      });
+    }
+
+    // 6. Success
+    res.status(200).json({
+      success: true,
+      message: "Note replaced successfully",
+      data: updated,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   createNote,
   createMultipleNotes,
   getAllNotes,
   getAllNote,
+  replaceNote,
 };
