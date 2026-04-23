@@ -8,6 +8,7 @@ const{
     getAllNote,
     replaceNote,
     updateNote,
+    deleteNote,
 } = require('../controllers/note.controller');
 
 router.post('/',createNote);
@@ -16,5 +17,6 @@ router.get('/',getAllNotes);
 router.get('/:id',getAllNote);
 router.put('/:id',replaceNote);
 router.patch('/:id',updateNote);
+router.delete('/:id',deleteNote);
 
 module.exports = router;

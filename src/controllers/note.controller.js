@@ -242,6 +242,48 @@ const updateNote = async (req, res) => {
   }
 };
 
+const deleteNote = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // 1. Validate ID
+    if (!isValidId(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid ID",
+        data: null,
+      });
+    }
+
+    // 2. Delete note
+    const deleted = await Notes.findByIdAndDelete(id);
+
+    // 3. Not found
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Note not found",
+        data: null,
+      });
+    }
+
+    // 4. Success
+    res.status(200).json({
+      success: true,
+      message: "Note deleted successfully",
+      data: null,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   createNote,
   createMultipleNotes,
@@ -249,4 +291,5 @@ module.exports = {
   getAllNote,
   replaceNote,
   updateNote,
+  deleteNote,
 };
