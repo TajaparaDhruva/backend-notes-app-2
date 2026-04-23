@@ -11,6 +11,7 @@ const{
     deleteNote,
     deleteBulkNotes,
     getNotesByCategory,
+    getNotesByStatus
 } = require('../controllers/note.controller');
 
 router.post('/',createNote);
@@ -22,5 +23,6 @@ router.patch('/:id',updateNote);
 router.delete('/bulk',deleteBulkNotes);
 router.delete('/:id',deleteNote);
 router.get('/category/:category',getNotesByCategory);
+router.get('/status/:isPinned',getNotesByStatus);
 
 module.exports = router;
