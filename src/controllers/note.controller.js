@@ -84,8 +84,30 @@ const getAllNotes = async (req, res) => {
   }
 };
 
+const getAllNote = async (req, res) => {
+  try {
+    const notes = await Notes.find();
+
+    res.status(200).json({
+      success: true,
+      message: "Notes fetched successfully",
+      count: notes.length,   // 👈 important addition
+      data: notes,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   createNote,
   createMultipleNotes,
   getAllNotes,
+  getAllNote,
 };
