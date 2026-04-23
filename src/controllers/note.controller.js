@@ -37,7 +37,6 @@ const createMultipleNotes = async (req, res) => {
   try {
     const { notes } = req.body;
 
-    // 1. Validate input
     if (!notes || !Array.isArray(notes) || notes.length === 0) {
       return res.status(400).json({
         success: false,
@@ -46,10 +45,8 @@ const createMultipleNotes = async (req, res) => {
       });
     }
 
-    // 2. Create notes
     const createdNotes = await Notes.insertMany(notes);
 
-    // 3. Success response (RETURN REAL DATA)
     res.status(201).json({
       success: true,
       message: `${createdNotes.length} notes created successfully`,
@@ -66,7 +63,29 @@ const createMultipleNotes = async (req, res) => {
   }
 };
 
+const getAllNotes = async (req, res) => {
+  try {
+    const notes = await Notes.find();
+
+    res.status(200).json({
+      success: true,
+      message: "Notes fetched successfully",
+      count: notes.length, 
+      data: notes,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   createNote,
   createMultipleNotes,
+  getAllNotes,
 };

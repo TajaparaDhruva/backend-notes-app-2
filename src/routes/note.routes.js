@@ -3,10 +3,12 @@ const router = express.Router();
 
 const{
     createNote,
-    createMultipleNotes
+    createMultipleNotes,
+    getAllNotes
 } = require('../controllers/note.controller');
 
 router.post('/',createNote);
 router.post('/bulk', createMultipleNotes);
+router.get('/',getAllNotes);
 
 module.exports = router;
