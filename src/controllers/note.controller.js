@@ -33,8 +33,40 @@ const createNote = async (req, res) => {
   }
 };
 
+const createMultipleNotes = async (req, res) => {
+  try {
+    const { notes } = req.body;
 
+    // 1. Validate input
+    if (!notes || !Array.isArray(notes) || notes.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Notes array is required and cannot be empty",
+        data: null,
+      });
+    }
+
+    // 2. Create notes
+    const createdNotes = await Notes.insertMany(notes);
+
+    // 3. Success response (RETURN REAL DATA)
+    res.status(201).json({
+      success: true,
+      message: `${createdNotes.length} notes created successfully`,
+      data: createdNotes,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
 
 module.exports = {
   createNote,
+  createMultipleNotes,
 };
