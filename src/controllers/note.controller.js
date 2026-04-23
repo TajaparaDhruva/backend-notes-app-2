@@ -169,10 +169,84 @@ const replaceNote = async (req, res) => {
   }
 };
 
+const updateNote = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // 1. Validate ID
+    if (!isValidId(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid ID",
+        data: null,
+      });
+    }
+
+    // 2. Handle empty body
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No fields provided to update",
+        data: null,
+      });
+    }
+
+    // 3. Allow only valid fields
+    const allowedFields = ["title", "content", "category", "isPinned"];
+    const updates = {};
+
+    for (let key of Object.keys(req.body)) {
+      if (allowedFields.includes(key)) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    // 4. If no valid fields
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No valid fields provided",
+        data: null,
+      });
+    }
+
+    // 5. Update note
+    const updated = await Notes.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    // 6. Not found
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: "Note not found",
+        data: null,
+      });
+    }
+
+    // 7. Success
+    res.status(200).json({
+      success: true,
+      message: "Note updated successfully",
+      data: updated,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   createNote,
   createMultipleNotes,
   getAllNotes,
   getAllNote,
   replaceNote,
+  updateNote,
 };
