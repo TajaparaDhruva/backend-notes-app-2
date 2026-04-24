@@ -16,6 +16,7 @@ const{
     getFilteredNotes,
     getPinnedNotes,
     getNotesByCategoryQuery,
+    getNotesByDateRange
 } = require('../controllers/note.controller');
 
 router.post('/', createNote);
@@ -42,5 +43,7 @@ router.put('/:id', replaceNote);
 router.patch('/:id', updateNote);
 router.delete('/bulk', deleteBulkNotes);
 router.delete('/:id', deleteNote);
+
+router.get('/filter/date-range',getNotesByDateRange);
 
 module.exports = router;
