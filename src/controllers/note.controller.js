@@ -510,6 +510,47 @@ const getFilteredNotes = async (req, res) => {
   }
 };
 
+const getPinnedNotes = async (req, res) => {
+  try {
+    const { category } = req.query;
+
+    const filter = { isPinned: true };
+
+    // 1. Optional category filter
+    const allowedCategories = ["work", "personal", "study"];
+
+    if (category) {
+      if (!allowedCategories.includes(category)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid category. Allowed: work, personal, study",
+          data: null,
+        });
+      }
+      filter.category = category;
+    }
+
+    // 2. Fetch notes
+    const notes = await Notes.find(filter);
+
+    // 3. Success (even if empty)
+    res.status(200).json({
+      success: true,
+      message: "Pinned notes fetched successfully",
+      count: notes.length,
+      data: notes,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   createNote,
   createMultipleNotes,
@@ -523,4 +564,5 @@ module.exports = {
   getNotesByStatus,
   getNoteSummary,
   getFilteredNotes,
+  getPinnedNotes,
 };

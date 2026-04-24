@@ -14,6 +14,7 @@ const{
     getNotesByStatus,
     getNoteSummary,
     getFilteredNotes,
+    getPinnedNotes,
 } = require('../controllers/note.controller');
 
 router.post('/',createNote);
@@ -28,5 +29,6 @@ router.get('/category/:category',getNotesByCategory);
 router.get('/status/:isPinned',getNotesByStatus);
 router.get('/:id/summary', getNoteSummary);
 router.get('/filter',getFilteredNotes);
+router.get('/filter/pinned', getPinnedNotes);
 
 module.exports = router;
