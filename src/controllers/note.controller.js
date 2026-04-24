@@ -551,6 +551,51 @@ const getPinnedNotes = async (req, res) => {
   }
 };
 
+const getNotesByCategoryQuery = async (req, res) => {
+  try {
+    const { name } = req.query;
+
+    // 1. Require query param
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: "Query param 'name' is required",
+        data: null,
+      });
+    }
+
+    // 2. Validate category
+    const allowedCategories = ["work", "personal", "study"];
+
+    if (!allowedCategories.includes(name)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid category. Allowed: work, personal, study",
+        data: null,
+      });
+    }
+
+    // 3. Fetch notes
+    const notes = await Notes.find({ category: name });
+
+    // 4. Success (even if empty)
+    res.status(200).json({
+      success: true,
+      message: `Notes filtered by category: ${name}`,
+      count: notes.length,
+      data: notes,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   createNote,
   createMultipleNotes,
@@ -565,4 +610,5 @@ module.exports = {
   getNoteSummary,
   getFilteredNotes,
   getPinnedNotes,
+  getNotesByCategoryQuery,
 };
